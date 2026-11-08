@@ -16,6 +16,9 @@
     <cache-path
         name="attachments"
         path="attachments"/>
+    <cache-path
+        name="updates"
+        path="updates/"/>
     <external-path name="external_files" path="."/>
     <root-path name="external_files" path="/storage/" />
 </paths>

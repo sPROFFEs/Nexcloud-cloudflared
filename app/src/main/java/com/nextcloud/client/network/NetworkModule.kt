@@ -8,6 +8,8 @@ package com.nextcloud.client.network
 
 import android.content.Context
 import com.nextcloud.client.account.UserAccountManager
+import com.nextcloud.client.network.cloudflare.CloudflareAccessManager
+import com.nextcloud.client.network.cloudflare.CloudflareSecureStorage
 import com.nextcloud.operations.GetMethod
 import dagger.Module
 import dagger.Provides
@@ -15,6 +17,22 @@ import javax.inject.Singleton
 
 @Module
 class NetworkModule {
+
+    @Provides
+    @Singleton
+    fun cloudflareSecureStorage(context: Context): CloudflareSecureStorage = CloudflareSecureStorage(context)
+
+    @Provides
+    @Singleton
+    fun cloudflareAccessManager(
+        context: Context,
+        secureStorage: CloudflareSecureStorage,
+        accountManager: UserAccountManager
+    ): CloudflareAccessManager {
+        val manager = CloudflareAccessManager(context, secureStorage, accountManager)
+        CloudflareAccessManager.initialize(manager)
+        return manager
+    }
 
     @Provides
     @Singleton

@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Nextcloud - Android Client
+  ~
+  ~ SPDX-FileCopyrightText: 2026 Nextcloud GmbH and Nextcloud contributors
+  ~ SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/cloudflare_access_section"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_marginTop="16dp"
+    android:layout_marginBottom="16dp"
+    android:paddingStart="@dimen/standard_padding"
+    android:paddingEnd="@dimen/standard_padding">
+
+    <TextView
+        android:id="@+id/cloudflare_section_header"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/cloudflare_access_section_title"
+        android:textColor="@color/login_text_color"
+        android:textStyle="bold"
+        android:textSize="16sp"
+        android:layout_marginBottom="8dp" />
+
+    <RadioGroup
+        android:id="@+id/cf_mode_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginBottom="8dp">
+
+        <RadioButton
+            android:id="@+id/cf_mode_disabled"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/cloudflare_access_mode_disabled"
+            android:textColor="@color/login_text_color"
+            android:checked="true" />
+
+        <RadioButton
+            android:id="@+id/cf_mode_service_token"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/cloudflare_access_mode_service_token"
+            android:textColor="@color/login_text_color" />
+
+        <RadioButton
+            android:id="@+id/cf_mode_interactive"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/cloudflare_access_mode_interactive"
+            android:textColor="@color/login_text_color" />
+    </RadioGroup>
+
+    <!-- Service Token Fields -->
+    <LinearLayout
+        android:id="@+id/cf_service_token_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/cf_client_id_layout"
+            style="@style/Widget.App.Login.TextInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/cloudflare_access_client_id"
+            android:theme="@style/TextInputLayoutLogin"
+            android:layout_marginBottom="8dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/cf_client_id_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textNoSuggestions"
+                android:singleLine="true"
+                android:textColor="@color/login_text_color" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/cf_client_secret_layout"
+            style="@style/Widget.App.Login.TextInputLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/cloudflare_access_client_secret"
+            android:theme="@style/TextInputLayoutLogin"
+            app:endIconMode="password_toggle"
+            app:endIconTint="@color/login_text_color"
+            android:layout_marginBottom="12dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/cf_client_secret_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPassword"
+                android:singleLine="true"
+                android:textColor="@color/login_text_color" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/cf_btn_test_connection"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/cloudflare_access_test_connection"
+            android:theme="@style/Button.Login"
+            android:layout_marginBottom="6dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/cf_btn_save_config"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/cloudflare_access_save_configuration"
+            android:theme="@style/Button.Login"
+            android:layout_marginBottom="6dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/cf_btn_remove_credentials"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/cloudflare_access_remove_credentials"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:textColor="@color/login_text_color"
+            android:layout_marginBottom="6dp" />
+
+    </LinearLayout>
+
+    <!-- Interactive Fields -->
+    <LinearLayout
+        android:id="@+id/cf_interactive_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <TextView
+            android:id="@+id/cf_text_auth_status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/cloudflare_access_status_not_authenticated"
+            android:textColor="@color/login_text_color"
+            android:layout_marginBottom="6dp" />
+
+        <TextView
+            android:id="@+id/cf_text_session_expiration"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/white_helper_text"
+            android:visibility="gone"
+            android:layout_marginBottom="10dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/cf_btn_authenticate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/cloudflare_access_authenticate"
+            android:theme="@style/Button.Login"
+            android:layout_marginBottom="6dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/cf_btn_reauthenticate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/cloudflare_access_reauthenticate"
+            android:theme="@style/Button.Login"
+            android:visibility="gone"
+            android:layout_marginBottom="6dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/cf_btn_logout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/cloudflare_access_logout"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:textColor="@color/login_text_color"
+            android:layout_marginBottom="6dp" />
+
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/cf_text_feedback"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:visibility="gone" />
+
+</LinearLayout>

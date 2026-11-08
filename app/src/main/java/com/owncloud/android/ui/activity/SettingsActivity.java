@@ -44,6 +44,7 @@ import android.webkit.URLUtil;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.nextcloud.client.account.User;
 import com.nextcloud.client.account.UserAccountManager;
+import com.nextcloud.client.updater.AppUpdateDialog;
 import com.nextcloud.client.di.Injectable;
 import com.nextcloud.client.etm.EtmActivity;
 import com.nextcloud.client.logger.ui.LogsActivity;
@@ -274,6 +275,14 @@ public class SettingsActivity extends PreferenceActivity
     private void setupAboutCategory(String appVersion) {
         final PreferenceCategory preferenceCategoryAbout = (PreferenceCategory) findPreference("about");
         viewThemeUtils.files.themePreferenceCategory(preferenceCategoryAbout);
+
+        Preference checkUpdatesPreference = findPreference("check_for_updates");
+        if (checkUpdatesPreference != null) {
+            checkUpdatesPreference.setOnPreferenceClickListener(preference -> {
+                AppUpdateDialog.show(this);
+                return true;
+            });
+        }
 
         /* About App */
         Preference pAboutApp = findPreference("about_app");

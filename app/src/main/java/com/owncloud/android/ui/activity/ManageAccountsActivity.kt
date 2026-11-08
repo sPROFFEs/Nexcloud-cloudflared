@@ -458,6 +458,12 @@ class ManageAccountsActivity :
                         accountClicked(user)
                     }
 
+                    R.id.action_cloudflare_settings -> {
+                        val serverUrl = user.server.uri.toString()
+                        val intent = CloudflareSettingsActivity.createIntent(this, user.accountName, serverUrl)
+                        startActivity(intent)
+                    }
+
                     R.id.action_delete_account -> {
                         openAccountRemovalDialog(user, supportFragmentManager)
                     }

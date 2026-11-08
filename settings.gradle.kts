@@ -41,15 +41,16 @@ dependencyResolutionManagement {
     }
 }
 
-/*
-Needed for local android library
-includeBuild("../android-library") {
-    dependencySubstitution {
-        substitute(module("com.github.nextcloud:android-library"))
-            .using(project(":library"))
+// Needed for local android library
+val localLibraryDir = sequenceOf(file("android-library"), file("../android-library")).firstOrNull { it.exists() }
+if (localLibraryDir != null) {
+    includeBuild(localLibraryDir) {
+        dependencySubstitution {
+            substitute(module("com.github.nextcloud:android-library"))
+                .using(project(":library"))
+        }
     }
 }
-*/
 
 
 /*

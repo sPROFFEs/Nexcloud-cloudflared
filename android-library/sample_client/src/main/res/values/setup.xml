@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ ~ Nextcloud Android Library - Sample Client
+ ~
+ ~ SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
+ ~ SPDX-FileCopyrightText: 2015 ownCloud Inc.
+ ~ SPDX-License-Identifier: MIT
+-->
+<resources>
+    <string name="server_base_url"></string>
+    <string name="username"></string>
+    <string name="password"></string>
+    <string name="user_agent">Mozilla/5.0 (Android) ownCloud sample </string>
+</resources>

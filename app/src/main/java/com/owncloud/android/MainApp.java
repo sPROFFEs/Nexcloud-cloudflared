@@ -48,6 +48,7 @@ import com.nextcloud.client.di.AppComponent;
 import com.nextcloud.client.di.DaggerAppComponent;
 import com.nextcloud.client.errorhandling.ExceptionHandler;
 import com.nextcloud.client.jobs.BackgroundJobManager;
+import com.nextcloud.client.network.cloudflare.CloudflareAccessManager;
 import com.nextcloud.client.logger.LegacyLoggerAdapter;
 import com.nextcloud.client.logger.Logger;
 import com.nextcloud.client.migrations.MigrationsManager;
@@ -147,6 +148,9 @@ public class MainApp extends Application implements HasAndroidInjector, NetworkC
 
     @Inject
     protected AppPreferences preferences;
+
+    @Inject
+    protected CloudflareAccessManager cloudflareAccessManager;
 
     @Inject
     protected DispatchingAndroidInjector<Object> dispatchingAndroidInjector;
@@ -311,6 +315,7 @@ public class MainApp extends Application implements HasAndroidInjector, NetworkC
         MainApp.storagePath = preferences.getStoragePath(getApplicationContext().getFilesDir().getAbsolutePath());
 
         OwnCloudClientManagerFactory.setUserAgent(getUserAgent());
+        OwnCloudClientManagerFactory.setCloudflareAuthProvider(cloudflareAccessManager);
 
         if (isClientBrandedPlus()) {
             setProxyConfig();

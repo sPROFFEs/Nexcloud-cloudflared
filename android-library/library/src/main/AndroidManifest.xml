@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+ ~ Nextcloud Android Library
+ ~
+ ~ SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
+ ~ SPDX-FileCopyrightText: 2015 ownCloud Inc.
+ ~ SPDX-License-Identifier: MIT
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:versionCode="1"
+    android:versionName="1.0.13">
+
+
+    <uses-permission
+        android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
+    <uses-permission
+        android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission
+        android:name="android.permission.MANAGE_ACCOUNTS" />
+    <uses-permission
+        android:name="android.permission.USE_CREDENTIALS" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- used by AdvancedX509KeyManager to ask user via a notification to select a
+         TLS client certificate when context is not able to start an Activity. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+
+    <application android:usesCleartextTraffic="true">
+        <activity
+            android:name=".common.network.SelectClientCertificateHelperActivity"
+            android:exported="false" />
+    </application>
+
+</manifest>
+

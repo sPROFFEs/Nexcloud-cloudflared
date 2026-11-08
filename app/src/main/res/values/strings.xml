@@ -1647,4 +1647,54 @@
     <string name="player_control_view_random_button_content_description">Random button</string>
     <string name="server_not_allowed">Server not allowed</string>
     <string name="run_two_way_sync">Run sync now</string>
+
+    <!-- Cloudflare Zero Trust Access -->
+    <string name="cloudflare_access_section_title">Cloudflare Zero Trust Access</string>
+    <string name="cloudflare_access_mode_disabled">Disabled</string>
+    <string name="cloudflare_access_mode_service_token">Service Token</string>
+    <string name="cloudflare_access_mode_interactive">Interactive User Login</string>
+    <string name="cloudflare_access_client_id">Cloudflare Access Client ID</string>
+    <string name="cloudflare_access_client_secret">Cloudflare Access Client Secret</string>
+    <string name="cloudflare_access_test_connection">Test Connection</string>
+    <string name="cloudflare_access_save_configuration">Save Configuration</string>
+    <string name="cloudflare_access_remove_credentials">Remove Credentials</string>
+    <string name="cloudflare_access_authenticate">Authenticate with Cloudflare</string>
+    <string name="cloudflare_access_reauthenticate">Reauthenticate</string>
+    <string name="cloudflare_access_logout">Logout from Cloudflare</string>
+    <string name="cloudflare_access_status_title">Status</string>
+    <string name="cloudflare_access_status_authenticated">Cloudflare Access authenticated</string>
+    <string name="cloudflare_access_status_not_authenticated">Cloudflare Access not authenticated</string>
+    <string name="cloudflare_access_status_expired">Cloudflare Access session expired</string>
+    <string name="cloudflare_access_session_expires">Session expires: %s</string>
+    <string name="cloudflare_access_session_established">Session established</string>
+    <string name="cloudflare_access_testing">Testing connection…</string>
+    <string name="cloudflare_access_test_success">Connection successful. Nextcloud instance reached.</string>
+    <string name="cloudflare_access_test_cf_failure">Failure occurred in Cloudflare Access: %s</string>
+    <string name="cloudflare_access_test_nc_failure">Failure occurred in Nextcloud: %s</string>
+    <string name="cloudflare_access_test_network_failure">Network failure: %s</string>
+    <string name="cloudflare_access_saved">Cloudflare Access configuration saved</string>
+    <string name="cloudflare_access_removed">Cloudflare Access credentials removed</string>
+    <string name="cloudflare_access_auth_title">Cloudflare Access</string>
+    <string name="cloudflare_access_auth_success">Cloudflare authentication successful</string>
+    <string name="cloudflare_access_auth_failed">Cloudflare authentication failed</string>
+    <string name="cloudflare_reauth_notification_title">Cloudflare Access session expired</string>
+    <string name="cloudflare_reauth_notification_text">Tap to reauthenticate with Cloudflare for %s</string>
+    <string name="cloudflare_access_settings_title">Cloudflare Access Settings</string>
+    <string name="cloudflare_access_missing_credentials">Please enter both Client ID and Client Secret</string>
+    <string name="cloudflare_access_missing_server_url">Please enter the server URL first</string>
+
+    <!-- In-App GitHub Updater -->
+    <string name="prefs_check_for_updates">Check for updates</string>
+    <string name="prefs_check_for_updates_summary">Check GitHub repository for new releases</string>
+    <string name="updater_dialog_title">App Update</string>
+    <string name="updater_checking">Checking for updates from GitHub…</string>
+    <string name="updater_up_to_date">The app is up to date (%s).</string>
+    <string name="updater_update_available">Update available: %s</string>
+    <string name="updater_current_version">Current version: %s</string>
+    <string name="updater_download_and_install">Download &amp; Install</string>
+    <string name="updater_downloading">Downloading update… %d%%</string>
+    <string name="updater_download_failed">Download failed: %s</string>
+    <string name="updater_installing">Starting installation…</string>
+    <string name="updater_permission_required">Permission to install unknown apps is required to install this update.</string>
+    <string name="updater_no_apk_found">No APK package found in the latest release.</string>
 </resources>

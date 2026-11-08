@@ -135,6 +135,11 @@
     </PreferenceCategory>
 	<PreferenceCategory android:title="@string/prefs_category_about" android:key="about">
 		<Preference
+			android:title="@string/prefs_check_for_updates"
+			android:summary="@string/prefs_check_for_updates_summary"
+			android:id="@+id/check_for_updates"
+			android:key="check_for_updates"/>
+		<Preference
 			android:title="@string/privacy"
 			android:id="@+id/privacy"
 			android:key="privacy"/>

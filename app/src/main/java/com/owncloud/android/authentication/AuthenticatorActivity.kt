@@ -128,6 +128,11 @@ open class AuthenticatorActivity :
     lateinit var accountManager: UserAccountManager
 
     @Inject
+    lateinit var cloudflareAccessManager: com.nextcloud.client.network.cloudflare.CloudflareAccessManager
+
+    private lateinit var cloudflareSetupHelper: CloudflareAccountSetupHelper
+
+    @Inject
     lateinit var preferences: AppPreferences
 
     @Inject
@@ -188,6 +193,10 @@ open class AuthenticatorActivity :
     // region Lifecycle
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (!::cloudflareAccessManager.isInitialized) {
+            cloudflareAccessManager = com.nextcloud.client.network.cloudflare.CloudflareAccessManager.from(this)
+        }
+        cloudflareSetupHelper = CloudflareAccountSetupHelper(this, cloudflareAccessManager)
         viewThemeUtils = viewThemeUtilsFactory.withPrimaryAsBackground()
         viewThemeUtils.platform.colorStatusBar(this, ContextCompat.getColor(this, R.color.primary))
 
@@ -385,6 +394,7 @@ open class AuthenticatorActivity :
     }
 
     private fun initOverallUi(binding: AccountSetupBinding) {
+        cloudflareSetupHelper.bind(binding.cloudflareAccessInclude, binding.hostUrlInput)
         binding.hostUrlContainer.setEndIconOnClickListener { checkOcServer() }
         binding.hostUrlInputHelperText.text =
             getString(R.string.login_url_helper_text, getString(R.string.app_name))
@@ -870,6 +880,7 @@ open class AuthenticatorActivity :
 
         if (isAccountSaved) {
             val accountName = requireNotNull(account).name
+            cloudflareAccessManager.promoteStaged(accountName)
             accountManager.setCurrentOwnCloudAccount(accountName)
             fetchCapabilitiesAndFinish(accountName)
             return

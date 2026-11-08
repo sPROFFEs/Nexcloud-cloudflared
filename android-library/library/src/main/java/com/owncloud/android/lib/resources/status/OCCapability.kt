@@ -1,0 +1,209 @@
+/*
+ * Nextcloud Android Library
+ *
+ * SPDX-FileCopyrightText: 2016-2024 Nextcloud GmbH and Nextcloud contributors
+ * SPDX-FileCopyrightText: 2023 Tobias Kaminsky <tobias@kaminsky.me>
+ * SPDX-FileCopyrightText: 2022 Álvaro Brey <alvaro@alvarobrey.com>
+ * SPDX-FileCopyrightText: 2015 ownCloud Inc.
+ * SPDX-License-Identifier: MIT
+ */
+package com.owncloud.android.lib.resources.status
+
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import com.nextcloud.android.lib.resources.clientintegration.App
+import com.nextcloud.android.lib.resources.clientintegration.Endpoint
+import kotlinx.serialization.json.Json
+
+/**
+ * Contains data of the Capabilities for an account, from the Capabilities API
+ */
+class OCCapability {
+    var id: Long = 0
+    var accountName: String? = ""
+
+    // Server version
+    var versionMayor = 0
+    var versionMinor = 0
+    var versionMicro = 0
+    var versionString: String? = ""
+    var versionEdition: String? = null
+
+    // Theming
+    var serverName: String? = ""
+    var serverSlogan: String? = ""
+    var serverColor: String? = ""
+    var serverTextColor: String? = ""
+    var serverElementColor: String? = ""
+    var serverElementColorBright: String? = ""
+    var serverElementColorDark: String? = ""
+    var serverLogo: String? = ""
+    var serverBackground: String? = ""
+    var serverBackgroundDefault = CapabilityBooleanType.UNKNOWN
+    var serverBackgroundPlain = CapabilityBooleanType.UNKNOWN
+
+    // Core PollInterval
+    var corePollInterval: Int = 0
+
+    // Mod-rewrite working (clean URLs without index.php)
+    var modRewriteWorking = CapabilityBooleanType.UNKNOWN
+
+    // Files Sharing
+    var filesSharingApiEnabled = CapabilityBooleanType.UNKNOWN
+    var filesSharingPublicEnabled = CapabilityBooleanType.UNKNOWN
+    var filesSharingPublicPasswordEnforced = CapabilityBooleanType.UNKNOWN
+    var filesSharingPublicAskForOptionalPassword = CapabilityBooleanType.UNKNOWN
+    var filesSharingPublicExpireDateEnabled = CapabilityBooleanType.UNKNOWN
+    var filesSharingPublicExpireDateDays: Int = 0
+    var filesSharingPublicExpireDateEnforced = CapabilityBooleanType.UNKNOWN
+    var filesSharingPublicSendMail = CapabilityBooleanType.UNKNOWN
+    var filesSharingPublicUpload = CapabilityBooleanType.UNKNOWN
+    var filesSharingUserSendMail = CapabilityBooleanType.UNKNOWN
+    var filesSharingResharing = CapabilityBooleanType.UNKNOWN
+    var filesSharingFederationOutgoing = CapabilityBooleanType.UNKNOWN
+    var filesSharingFederationIncoming = CapabilityBooleanType.UNKNOWN
+
+    // Files
+    var filesBigFileChunking = CapabilityBooleanType.UNKNOWN
+    var chunkedUploadMaxSize = CHUNKED_UPLOAD_MAX_SIZE_UNKNOWN
+    var filesUndelete = CapabilityBooleanType.UNKNOWN
+    var filesVersioning = CapabilityBooleanType.UNKNOWN
+
+    var filesLockingVersion: String? = null
+
+    var supportsNotificationsV1 = CapabilityBooleanType.UNKNOWN
+    var supportsNotificationsV2 = CapabilityBooleanType.UNKNOWN
+
+    var externalLinks = CapabilityBooleanType.UNKNOWN
+
+    // Fullnextsearch
+    var fullNextSearchEnabled: CapabilityBooleanType? = null
+    var fullNextSearchFiles: CapabilityBooleanType? = null
+
+    var endToEndEncryption = CapabilityBooleanType.UNKNOWN
+    var endToEndEncryptionKeysExist = CapabilityBooleanType.UNKNOWN
+    var endToEndEncryptionApiVersion = E2EVersion.UNKNOWN
+
+    // Richdocuments
+    var richDocuments = CapabilityBooleanType.UNKNOWN
+    var richDocumentsDirectEditing = CapabilityBooleanType.FALSE
+    var richDocumentsTemplatesAvailable = CapabilityBooleanType.FALSE
+    var richDocumentsMimeTypeList: List<String>? = emptyList()
+    var richDocumentsOptionalMimeTypeList: List<String>? = emptyList()
+    var richDocumentsProductName: String? = "Collabora Online"
+
+    var activity = CapabilityBooleanType.UNKNOWN
+
+    var extendedSupport = CapabilityBooleanType.UNKNOWN
+
+    // DirectEditing
+    var directEditingEtag: String? = ""
+
+    // user status
+    var userStatus = CapabilityBooleanType.UNKNOWN
+    var userStatusSupportsEmoji = CapabilityBooleanType.UNKNOWN
+    var userStatusSupportsBusy = CapabilityBooleanType.UNKNOWN
+
+    // Groupfolders
+    var groupfolders = CapabilityBooleanType.UNKNOWN
+
+    var assistant = CapabilityBooleanType.UNKNOWN
+
+    // Drop-Account
+    var dropAccount = CapabilityBooleanType.UNKNOWN
+
+    // Security guard
+    var securityGuard = CapabilityBooleanType.UNKNOWN
+
+    // Governance
+    var governance = CapabilityBooleanType.UNKNOWN
+
+    // Recommendations
+    var recommendations = CapabilityBooleanType.UNKNOWN
+
+    // needed for checking compatible filenames
+    var forbiddenFilenameCharactersJson: String? = null
+    var forbiddenFilenamesJson: String? = null
+    var forbiddenFilenameExtensionJson: String? = null
+    var forbiddenFilenameBaseNamesJson: String? = null
+    var isWCFEnabled = CapabilityBooleanType.UNKNOWN
+
+    // files download limits
+    var filesDownloadLimit = CapabilityBooleanType.UNKNOWN
+    var filesDownloadLimitDefault = -1
+
+    // notes folder location
+    var notesFolderPath: String? = null
+
+    // client integration
+    var clientIntegrationJson: String? = null
+
+    var sharingJson: String? = null
+
+    fun getClientIntegrationEndpoints(
+        hook: Type,
+        mimetype: String
+    ): List<Endpoint> {
+        if (clientIntegrationJson == null) {
+            return emptyList()
+        }
+
+        val appsType = object : TypeToken<Map<String, App>>() {}.type
+        val apps: Map<String, App> = Gson().fromJson(clientIntegrationJson, appsType)
+
+        val endpoints =
+            apps.values
+                .filter { it.version <= CLIENT_INTEGRATION_VERSION }
+                .mapNotNull { mapHooks(it, hook) }
+                .flatMap { it.toList() }
+                .filter { filterMimetype(mimetype, it.mimetypeFilter) }
+
+        // GET by default
+        endpoints.forEach {
+            if (it.method == null) {
+                it.method = Method.GET
+            }
+        }
+
+        return endpoints
+    }
+
+    private fun mapHooks(
+        app: App,
+        hook: Type
+    ): List<Endpoint> =
+        when (hook) {
+            Type.CONTEXT_MENU -> app.contextMenu
+            Type.CREATE_NEW -> app.createNew
+        }
+
+    private fun filterMimetype(
+        mimetype: String,
+        mimetypeFilter: String?
+    ): Boolean =
+        mimetypeFilter?.split(",")?.any {
+            mimetype.startsWith(it.trim())
+        } ?: true
+
+    // Etag for capabilities
+    var etag: String? = ""
+
+    var defaultPermissions: Int? = null
+
+    // support
+    var hasValidSubscription = CapabilityBooleanType.UNKNOWN
+
+    val version: OwnCloudVersion
+        get() =
+            OwnCloudVersion(
+                listOf(versionMayor, versionMinor, versionMicro).joinToString(
+                    VERSION_DOT
+                )
+            )
+
+    companion object {
+        private const val VERSION_DOT = "."
+        const val CLIENT_INTEGRATION_VERSION = 0.1
+        const val CHUNKED_UPLOAD_MAX_SIZE_UNKNOWN = -1L
+    }
+}

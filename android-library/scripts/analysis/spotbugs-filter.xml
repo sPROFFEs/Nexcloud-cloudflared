@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ ~ Nextcloud Android Library
+ ~
+ ~ SPDX-FileCopyrightText: 2017-2024 Nextcloud GmbH and Nextcloud contributors
+ ~ SPDX-FileCopyrightText: 2017 Tobias Kaminsky <tobias@kaminsky.me>
+ ~ SPDX-License-Identifier: MIT
+-->
+<FindBugsFilter>
+    <!-- Ignore test-only constructors -->
+    <Match>
+        <Class name="~com\.owncloud\.android\.lib\.resources\.activities\.model\.Activity" />
+        <Bug pattern="EI_EXPOSE_REP2" />
+    </Match>
+
+	<Match>
+        <Class name="~.*\.Manifest\$.*" />
+    </Match>
+    <Match>
+        <Class name="~.*\.R\$.*" />
+    </Match>
+    <Match>
+        <Class name="~.*\$\$Parcelable.*" />
+    </Match>
+    <Bug pattern="PATH_TRAVERSAL_IN" />
+    <Bug pattern="ANDROID_EXTERNAL_FILE_ACCESS" />
+    <Bug pattern="BAS_BLOATED_ASSIGNMENT_SCOPE" />
+    <Bug pattern="HTTP_PARAMETER_POLLUTION" />
+</FindBugsFilter>
