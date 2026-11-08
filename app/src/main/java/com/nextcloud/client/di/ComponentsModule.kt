@@ -51,6 +51,8 @@ import com.owncloud.android.services.OperationsService
 import com.owncloud.android.syncadapter.FileSyncService
 import com.owncloud.android.ui.activity.AlbumsPickerActivity
 import com.owncloud.android.ui.activity.BaseActivity
+import com.owncloud.android.ui.activity.CloudflareAuthActivity
+import com.owncloud.android.ui.activity.CloudflareSettingsActivity
 import com.owncloud.android.ui.activity.ConflictsResolveActivity
 import com.owncloud.android.ui.activity.ContactsPreferenceActivity
 import com.owncloud.android.ui.activity.CopyToClipboardActivity
@@ -162,6 +164,12 @@ internal interface ComponentsModule {
 
     @ContributesAndroidInjector
     fun authenticatorActivity(): AuthenticatorActivity
+
+    @ContributesAndroidInjector
+    fun cloudflareAuthActivity(): CloudflareAuthActivity
+
+    @ContributesAndroidInjector
+    fun cloudflareSettingsActivity(): CloudflareSettingsActivity
 
     @ContributesAndroidInjector
     fun baseActivity(): BaseActivity

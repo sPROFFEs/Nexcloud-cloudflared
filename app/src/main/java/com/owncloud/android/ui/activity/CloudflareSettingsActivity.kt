@@ -24,7 +24,6 @@ import androidx.lifecycle.lifecycleScope
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textfield.TextInputEditText
-import com.nextcloud.client.di.Injectable
 import com.nextcloud.client.network.cloudflare.CloudflareAccessConfig
 import com.nextcloud.client.network.cloudflare.CloudflareAccessManager
 import com.nextcloud.client.network.cloudflare.CloudflareAccessMode
@@ -33,14 +32,10 @@ import com.owncloud.android.R
 import kotlinx.coroutines.launch
 import java.text.DateFormat
 import java.util.Date
-import javax.inject.Inject
 
-class CloudflareSettingsActivity :
-    AppCompatActivity(),
-    Injectable {
+class CloudflareSettingsActivity : AppCompatActivity() {
 
-    @Inject
-    lateinit var cloudflareAccessManager: CloudflareAccessManager
+    private lateinit var cloudflareAccessManager: CloudflareAccessManager
 
     private var accountName: String? = null
     private var serverUrl: String = ""
@@ -69,9 +64,7 @@ class CloudflareSettingsActivity :
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_cloudflare_settings)
 
-        if (!::cloudflareAccessManager.isInitialized) {
-            cloudflareAccessManager = CloudflareAccessManager.from(this)
-        }
+        cloudflareAccessManager = CloudflareAccessManager.from(this)
 
         accountName = intent.getStringExtra(EXTRA_ACCOUNT_NAME)
         serverUrl = intent.getStringExtra(EXTRA_SERVER_URL).orEmpty()

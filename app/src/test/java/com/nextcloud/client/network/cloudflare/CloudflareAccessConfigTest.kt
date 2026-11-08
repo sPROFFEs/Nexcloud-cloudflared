@@ -84,6 +84,17 @@ class CloudflareAccessConfigTest {
     }
 
     @Test
+    fun matchesOrigin_urlWithoutScheme_matchesDefaultHttps() {
+        val config = CloudflareAccessConfig(
+            mode = CloudflareAccessMode.SERVICE_TOKEN,
+            serverUrl = "cloud.example.com"
+        )
+
+        assertTrue(config.matchesOrigin("https://cloud.example.com/status.php"))
+        assertTrue(config.matchesOrigin("cloud.example.com/status.php"))
+    }
+
+    @Test
     fun matchesOrigin_invalidUrls_returnsFalseSafely() {
         val config = CloudflareAccessConfig(
             mode = CloudflareAccessMode.SERVICE_TOKEN,

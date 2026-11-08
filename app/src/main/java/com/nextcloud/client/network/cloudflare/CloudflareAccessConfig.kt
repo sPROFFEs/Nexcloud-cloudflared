@@ -65,7 +65,8 @@ data class CloudflareAccessConfig(
         private const val DEFAULT_HTTPS_PORT = 443
 
         private fun safeParseUri(url: String): URI? = try {
-            URI.create(url)
+            val withScheme = if (!url.contains("://")) "https://$url" else url
+            URI.create(withScheme)
         } catch (_: Exception) {
             null
         }

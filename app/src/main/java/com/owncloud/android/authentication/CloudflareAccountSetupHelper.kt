@@ -8,10 +8,10 @@
 package com.owncloud.android.authentication
 
 import android.app.Activity
-import android.content.Context
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.View
 import android.widget.EditText
-import android.widget.RadioButton
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
@@ -35,25 +35,60 @@ class CloudflareAccountSetupHelper(
 ) {
     private var binding: ViewCloudflareAccessConfigBinding? = null
     private var hostUrlEditText: EditText? = null
+    private var onAuthenticatedListener: (() -> Unit)? = null
 
     private val authLauncher: ActivityResultLauncher<android.content.Intent> =
         activity.registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
                 updateInteractiveStatus()
                 Toast.makeText(activity, R.string.cloudflare_access_auth_success, Toast.LENGTH_SHORT).show()
+                onAuthenticatedListener?.invoke()
             }
         }
 
-    fun bind(configBinding: ViewCloudflareAccessConfigBinding?, hostUrlInput: EditText) {
+    fun bind(
+        configBinding: ViewCloudflareAccessConfigBinding?,
+        hostUrlInput: EditText,
+        onAuthenticated: () -> Unit = {}
+    ) {
         if (configBinding == null) return
         binding = configBinding
         hostUrlEditText = hostUrlInput
+        onAuthenticatedListener = onAuthenticated
 
         val staged = cloudflareAccessManager.getStagedConfig()
+        val currentText = hostUrlInput.text?.toString().orEmpty().trim()
+        if (currentText.isNotBlank() && staged.serverUrl.isBlank()) {
+            cloudflareAccessManager.saveStagedConfig(staged.copy(serverUrl = currentText))
+        }
+
+        hostUrlInput.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) = Unit
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) = Unit
+            override fun afterTextChanged(s: Editable?) {
+                val url = s?.toString().orEmpty().trim()
+                val current = cloudflareAccessManager.getStagedConfig()
+                if (current.serverUrl != url) {
+                    cloudflareAccessManager.saveStagedConfig(current.copy(serverUrl = url))
+                }
+            }
+        })
 
         initModeSelection(configBinding, staged)
         initServiceTokenActions(configBinding)
         initInteractiveActions(configBinding)
+    }
+
+    fun notifyCloudflareDetected() {
+        val b = binding ?: return
+        val staged = cloudflareAccessManager.getStagedConfig()
+        if (staged.mode == CloudflareAccessMode.DISABLED) {
+            b.cfModeInteractive.isChecked = true
+        }
+        showFeedback(
+            activity.getString(R.string.cloudflare_access_detected_guide),
+            FailureOrigin.CLOUDFLARE_ACCESS
+        )
     }
 
     private fun initModeSelection(configBinding: ViewCloudflareAccessConfigBinding, staged: CloudflareAccessConfig) {
@@ -218,6 +253,11 @@ class CloudflareAccountSetupHelper(
         val clientId = b.cfClientIdInput.text?.toString().orEmpty().trim()
         val clientSecret = b.cfClientSecretInput.text?.toString().orEmpty().trim()
 
+        if (clientId.isBlank() || clientSecret.isBlank()) {
+            showFeedback(activity.getString(R.string.cloudflare_access_missing_credentials), FailureOrigin.NETWORK)
+            return
+        }
+
         val config = CloudflareAccessConfig(
             mode = CloudflareAccessMode.SERVICE_TOKEN,
             clientId = clientId,
@@ -226,6 +266,7 @@ class CloudflareAccountSetupHelper(
         )
         cloudflareAccessManager.saveStagedConfig(config)
         Toast.makeText(activity, R.string.cloudflare_access_saved, Toast.LENGTH_SHORT).show()
+        onAuthenticatedListener?.invoke()
     }
 
     private fun saveStagedMode(mode: CloudflareAccessMode) {

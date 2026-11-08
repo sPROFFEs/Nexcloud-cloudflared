@@ -56,6 +56,8 @@ import com.nextcloud.client.di.Injectable
 import com.nextcloud.client.onboarding.FirstRunActivity
 import com.nextcloud.client.onboarding.OnboardingService
 import com.nextcloud.client.preferences.AppPreferences
+import com.nextcloud.client.network.cloudflare.CloudflareConnectionTester
+import com.nextcloud.client.network.cloudflare.FailureOrigin
 import com.nextcloud.repository.ClientRepository
 import com.nextcloud.utils.SnackbarUtil
 import com.nextcloud.utils.extensions.getParcelableArgument
@@ -394,7 +396,7 @@ open class AuthenticatorActivity :
     }
 
     private fun initOverallUi(binding: AccountSetupBinding) {
-        cloudflareSetupHelper.bind(binding.cloudflareAccessInclude, binding.hostUrlInput)
+        cloudflareSetupHelper.bind(binding.cloudflareAccessInclude, binding.hostUrlInput) { checkOcServer() }
         binding.hostUrlContainer.setEndIconOnClickListener { checkOcServer() }
         binding.hostUrlInputHelperText.text =
             getString(R.string.login_url_helper_text, getString(R.string.app_name))
@@ -725,8 +727,13 @@ open class AuthenticatorActivity :
             onServerInfoReceived(result.data[0] as ServerInfo)
         } else {
             Log_OC.e(TAG, "Server check: failed, code=${result.code}, ${result.logMessage}")
-            updateServerStatus(result)
-            showServerStatus()
+            val inputUrl = accountSetupBinding?.hostUrlInput?.text?.toString().orEmpty().trim()
+            if (shouldCheckCloudflareProtection(result, inputUrl)) {
+                checkCloudflareProtection(inputUrl, result)
+            } else {
+                updateServerStatus(result)
+                showServerStatus()
+            }
         }
 
         if (result.code == ResultCode.SSL_RECOVERABLE_PEER_UNVERIFIED) {
@@ -734,6 +741,37 @@ open class AuthenticatorActivity :
         }
     }
 
+    private fun shouldCheckCloudflareProtection(result: RemoteOperationResult<*>, url: String): Boolean {
+        if (url.isBlank()) return false
+        val code = result.code
+        val httpCode = result.httpCode
+        return code == ResultCode.UNHANDLED_HTTP_CODE ||
+            code == ResultCode.FORBIDDEN ||
+            code == ResultCode.UNAUTHORIZED ||
+            code == ResultCode.INSTANCE_NOT_CONFIGURED ||
+            code == ResultCode.WRONG_CONNECTION ||
+            code == ResultCode.UNKNOWN_ERROR ||
+            httpCode in HTTP_ERROR_STATUS_MIN..HTTP_ERROR_STATUS_MAX
+    }
+
+    private fun checkCloudflareProtection(inputUrl: String, originalResult: RemoteOperationResult<*>) {
+        lifecycleScope.launch {
+            val stagedConfig = cloudflareAccessManager.getStagedConfig()
+            val tester = CloudflareConnectionTester()
+            val testResult = tester.testConnection(inputUrl, stagedConfig)
+            if (testResult.failureOrigin == FailureOrigin.CLOUDFLARE_ACCESS) {
+                serverStatus = AuthenticatorStatus(
+                    R.drawable.ic_lock_white,
+                    getString(R.string.cloudflare_access_detected_guide)
+                )
+                showServerStatus()
+                cloudflareSetupHelper.notifyCloudflareDetected()
+            } else {
+                updateServerStatus(originalResult)
+                showServerStatus()
+            }
+        }
+    }
     private fun onServerInfoReceived(receivedServerInfo: ServerInfo) {
         serverInfo = receivedServerInfo
         Log_OC.d(TAG, "Server check: succeeded for ${serverInfo.mBaseUrl}")
@@ -1231,6 +1269,9 @@ open class AuthenticatorActivity :
         const val HTTP_PROTOCOL: String = "http://"
 
         const val EMPTY_STRING: String = ""
+        private const val HTTP_ERROR_STATUS_MIN = 300
+        private const val HTTP_ERROR_STATUS_MAX = 499
+
         const val REQUEST_CODE_FIRST_RUN: Int = 102
     }
 }

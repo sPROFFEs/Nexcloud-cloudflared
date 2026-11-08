@@ -1682,6 +1682,7 @@
     <string name="cloudflare_access_settings_title">Cloudflare Access Settings</string>
     <string name="cloudflare_access_missing_credentials">Please enter both Client ID and Client Secret</string>
     <string name="cloudflare_access_missing_server_url">Please enter the server URL first</string>
+    <string name="cloudflare_access_detected_guide">Server protected by Cloudflare Zero Trust. Please authenticate with Cloudflare below to continue.</string>
 
     <!-- In-App GitHub Updater -->
     <string name="prefs_check_for_updates">Check for updates</string>

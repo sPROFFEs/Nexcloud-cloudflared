@@ -26,20 +26,15 @@ import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.progressindicator.LinearProgressIndicator
-import com.nextcloud.client.di.Injectable
 import com.nextcloud.client.network.cloudflare.CloudflareAccessManager
 import com.nextcloud.client.network.cloudflare.CloudflareAccessMode
 import com.nextcloud.client.network.cloudflare.CloudflareJwtParser
 import com.nextcloud.client.network.cloudflare.CloudflareSession
 import com.owncloud.android.R
-import javax.inject.Inject
 
-class CloudflareAuthActivity :
-    AppCompatActivity(),
-    Injectable {
+class CloudflareAuthActivity : AppCompatActivity() {
 
-    @Inject
-    lateinit var cloudflareAccessManager: CloudflareAccessManager
+    private lateinit var cloudflareAccessManager: CloudflareAccessManager
 
     private lateinit var webView: WebView
     private lateinit var progressBar: LinearProgressIndicator
@@ -52,11 +47,14 @@ class CloudflareAuthActivity :
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_cloudflare_auth)
 
-        if (!::cloudflareAccessManager.isInitialized) {
-            cloudflareAccessManager = CloudflareAccessManager.from(this)
-        }
+        cloudflareAccessManager = CloudflareAccessManager.from(this)
 
-        serverUrl = intent.getStringExtra(EXTRA_SERVER_URL).orEmpty()
+        val rawServerUrl = intent.getStringExtra(EXTRA_SERVER_URL).orEmpty().trim()
+        serverUrl = if (rawServerUrl.isNotBlank() && !rawServerUrl.contains("://")) {
+            "https://$rawServerUrl"
+        } else {
+            rawServerUrl
+        }
         accountName = intent.getStringExtra(EXTRA_ACCOUNT_NAME)
         val initialUrl = intent.getStringExtra(EXTRA_AUTH_URL)?.takeIf { it.isNotBlank() } ?: serverUrl
 
@@ -95,6 +93,11 @@ class CloudflareAuthActivity :
         settings.databaseEnabled = false
         settings.setSupportMultipleWindows(true)
         settings.javaScriptCanOpenWindowsAutomatically = true
+
+        val defaultUa = settings.userAgentString
+        if (defaultUa != null && defaultUa.contains("; wv")) {
+            settings.userAgentString = defaultUa.replace("; wv", "")
+        }
 
         val cookieManager = CookieManager.getInstance()
         cookieManager.setAcceptCookie(true)
@@ -158,7 +161,9 @@ class CloudflareAuthActivity :
         if (authCompleted) return
 
         val cookieManager = CookieManager.getInstance()
-        val cookieString = cookieManager.getCookie(serverUrl) ?: cookieManager.getCookie(currentUrl)
+        val cookieString = cookieManager.getCookie(serverUrl)
+            ?: cookieManager.getCookie(currentUrl)
+            ?: Uri.parse(serverUrl).host?.let { cookieManager.getCookie(it) }
 
         if (cookieString.isNullOrBlank() || !cookieString.contains(COOKIE_CF_AUTH)) {
             return
