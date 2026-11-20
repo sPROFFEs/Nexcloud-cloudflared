@@ -14,6 +14,7 @@ import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.isRoot
+import com.nextcloud.test.GrantStoragePermissionRule.Companion.grant
 import com.owncloud.android.AbstractIT
 import com.owncloud.android.datamodel.ArbitraryDataProviderImpl
 import com.owncloud.android.ui.activity.RequestCredentialsActivity
@@ -21,11 +22,16 @@ import com.owncloud.android.ui.activity.SettingsActivity
 import com.owncloud.android.utils.EncryptionUtils
 import com.owncloud.android.utils.ScreenshotTest
 import org.junit.Assert
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TestRule
 
 @Suppress("FunctionNaming")
 class SettingsActivityIT : AbstractIT() {
     private val testClassName = "com.nextcloud.client.SettingsActivityIT"
+
+    @get:Rule
+    var storagePermissionRule: TestRule = grant()
 
     @Test
     @ScreenshotTest

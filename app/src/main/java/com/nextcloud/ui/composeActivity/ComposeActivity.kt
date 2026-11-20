@@ -33,7 +33,7 @@ import com.nextcloud.ui.ClientIntegrationScreen
 import com.nextcloud.utils.extensions.getParcelableArgument
 import com.owncloud.android.R
 import com.owncloud.android.databinding.ActivityComposeBinding
-import com.owncloud.android.ui.activity.drawer.DrawerActivity
+import com.owncloud.android.ui.activity.DrawerActivity
 
 class ComposeActivity : DrawerActivity() {
 
@@ -81,8 +81,7 @@ class ComposeActivity : DrawerActivity() {
         composeViewModel.updateSelectedText(text.toString())
     }
 
-    override val menuItemId: Int
-        get() = R.id.nav_assistant
+    override fun getMenuItemId(): Int = R.id.nav_assistant
 
     override fun onResume() {
         super.onResume()

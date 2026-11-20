@@ -101,7 +101,7 @@ class ContactsBackupIT : AbstractOnServerIT() {
             fail("folderPath cannot be empty")
         }
 
-        val folder = storageManager.getFileByDecryptedRemotePath(folderPath)
+        val folder = fileDataStorageManager.getFileByDecryptedRemotePath(folderPath)
         if (folder == null) {
             fail("folder cannot be null")
         }

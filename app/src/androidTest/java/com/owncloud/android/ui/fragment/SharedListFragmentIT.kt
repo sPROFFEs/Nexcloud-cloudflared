@@ -14,6 +14,7 @@ import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.isRoot
+import com.nextcloud.test.GrantStoragePermissionRule.Companion.grant
 import com.nextcloud.test.TestActivity
 import com.owncloud.android.AbstractIT
 import com.owncloud.android.datamodel.OCFile
@@ -25,7 +26,9 @@ import com.owncloud.android.utils.ScreenshotTest
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.TestRule
 
 internal class SharedListFragmentIT : AbstractIT() {
     private val testClassName = "com.owncloud.android.ui.fragment.SharedListFragmentIT"
@@ -39,6 +42,9 @@ internal class SharedListFragmentIT : AbstractIT() {
     fun unregisterIdlingResource() {
         IdlingRegistry.getInstance().unregister(EspressoIdlingResource.countingIdlingResource)
     }
+
+    @get:Rule
+    var storagePermissionRule: TestRule = grant()
 
     @Test
     @ScreenshotTest

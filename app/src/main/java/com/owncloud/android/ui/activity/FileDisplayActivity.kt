@@ -649,7 +649,7 @@ class FileDisplayActivity :
 
             else -> {
                 fragment.listDirectory(startFile, false)
-                updateActionBarTitleAndHomeButton(currentDir ?: startFile)
+                updateActionBarTitleAndHomeButton(startFile)
             }
         }
     }
@@ -977,8 +977,7 @@ class FileDisplayActivity :
      * 2) Currently visible fragment (and its active child)
      * 3) Fallback to All Files
      */
-    override val menuItemId: Int
-        get() = MainApp.getMenuItemId() ?: listOfFilesFragment?.menuItemId ?: R.id.nav_all_files
+    override fun getMenuItemId(): Int = MainApp.getMenuItemId() ?: listOfFilesFragment?.menuItemId ?: R.id.nav_all_files
 
     override fun setFile(file: OCFile?) {
         super.setFile(file)
@@ -1182,8 +1181,7 @@ class FileDisplayActivity :
         supportInvalidateOptionsMenu()
     }
 
-    override val isDrawerIndicatorAvailable: Boolean
-        get() = isRoot(getCurrentDir())
+    override fun isDrawerIndicatorAvailable(): Boolean = isRoot(getCurrentDir())
 
     fun configureToolbarForPreview(file: OCFile) {
         lockScrolling()
@@ -1299,7 +1297,7 @@ class FileDisplayActivity :
         view.onActionViewCollapsed()
         setDrawerIndicatorEnabled(isDrawerIndicatorAvailable) // order matters
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
-        mDrawerToggle?.syncState()
+        mDrawerToggle.syncState()
 
         listOfFilesFragment?.run {
             isSearchFragment = false
@@ -2332,7 +2330,7 @@ class FileDisplayActivity :
 
     private fun refreshGalleryFragmentIfNeeded() {
         if (topFileListFragment is GalleryFragment) {
-            startPhotoSearch()
+            startPhotoSearch(R.id.nav_gallery)
         }
     }
 
